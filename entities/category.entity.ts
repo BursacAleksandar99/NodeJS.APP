@@ -3,6 +3,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -60,5 +61,6 @@ export class Category {
   categories: Category[];
 
   @OneToMany(() => Feature, (feature) => feature.category)
+  // @JoinTable({name: 'category_id'})
   features: Feature[];
 }

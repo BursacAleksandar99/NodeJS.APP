@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { AppController } from './controllers/app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseConfiguration } from 'config/database.configuration';
 import { Administrator } from 'entities/administator.entity';
@@ -14,6 +14,11 @@ import { Feature } from 'entities/feature.entity';
 import { Order } from 'entities/order.entity';
 import { Photo } from 'entities/photo.entity';
 import { User } from 'entities/user.entity';
+import { AdministratorController } from './controllers/api/administrator.controller';
+import { CategoryController } from './controllers/api/category.controller';
+import { CategoryService } from './services/category/category.service';
+import { ArticleController } from './controllers/api/article.controller';
+import { ArticleService } from './services/article/article.service';
 
 @Module({
   imports: [
@@ -38,9 +43,20 @@ import { User } from 'entities/user.entity';
         User
         ]
     }),
-    TypeOrmModule.forFeature([Administrator])
+    TypeOrmModule.forFeature([
+      Administrator,
+      Category,
+      Article])
   ],
-  controllers: [AppController],
-  providers: [AdministatorService],
+  controllers: [
+    AppController,
+    AdministratorController,
+    CategoryController,
+    ArticleController],
+  providers: [
+    AdministatorService,
+    CategoryService,
+    ArticleService
+    ],
 })
 export class AppModule {}
