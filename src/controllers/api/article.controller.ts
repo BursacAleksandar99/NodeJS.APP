@@ -30,6 +30,11 @@ export class ArticleController{
     constructor(public articleService: ArticleService){
         
     }
+    @Post('createFull')
+    createFullArticle(@Body() data: AddArticleDto){
+        return this.articleService.createFullArticle(data);
+    }
+
     @Get()
     getAll(@Query('join') join?: string): Promise<Article[]>{
         if(join === 'category'){
