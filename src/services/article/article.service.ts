@@ -9,7 +9,9 @@ import { Repository } from "typeorm";
 
 @Injectable()
 export class ArticleService {
-    constructor(@InjectRepository(Article) private readonly article: Repository<Article>){
+    constructor(
+        @InjectRepository(Article) 
+        private readonly article: Repository<Article>){
         
     }
 

@@ -1,30 +1,14 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { Crud } from "@nestjsx/crud";
 import { Category } from "entities/category.entity";
 import { join } from "path";
+import { AddCategoryDto } from "src/dtos/category/add.category.dto";
+import { EditCategoryDto } from "src/dtos/category/edit.category.dto";
 import { CategoryService } from "src/services/category/category.service";
 import { JoinTable } from "typeorm";
 
 @Controller('api/category')
-// @Crud({
-//     model: {
-//         type: Category
-//     },
-//     params: {
-//         id:{
-//             field: 'id',
-//             type: 'number',
-//             primary: true
-//         }
-//     },
-//     query: {
-//         join: {
-//             categories: {
-//                 eager: true
-//             }
-//         }
-//     }
-// })
+
 export class CategoryController{
     constructor(
         public categoryService: CategoryService
@@ -51,11 +35,25 @@ export class CategoryController{
     
 
         // http://localhost:3000/api/category/1/
-    @Get(':id') 
-    getById(@Param('id') categoryId: number): Promise<Category>{
-        return this.categoryService.getById(categoryId);
+    // @Get(':id') 
+    // getById(@Param('id') categoryId: number): Promise<Category>{
+    //     return this.categoryService.getById(categoryId);
         
 
+    // }
+
+    @Post()
+    createOne(@Body() AddArticleDto: AddCategoryDto): Promise<Category> {
+    return this.categoryService.createOne(AddArticleDto)
     }
-   
+    
+   @Put(':id')
+   async update(@Param('id') categoryId: number, @Body() EditCategoryDto: EditCategoryDto): Promise<Category>{
+    return this.categoryService.update(categoryId, EditCategoryDto);
+   }
+
+   @Delete(':id')
+    async delete(@Param('id') articleId: number): Promise<void>{
+        return this.categoryService.deleteCategory(articleId);
+    }
 }
