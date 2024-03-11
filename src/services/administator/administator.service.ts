@@ -4,6 +4,7 @@ import { Administrator } from 'entities/administator.entity';
 import { AddAdministratorDto } from 'src/dtos/administrator/add.administrator.dto';
 import { EditAdministratorDto } from 'src/dtos/administrator/edit.administrator.dto';
 import { FindOneOptions, Repository } from 'typeorm';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AdministatorService {
@@ -14,6 +15,14 @@ export class AdministatorService {
 
     getall(): Promise<Administrator[]>{ // obecanje da ce vratiti niz administatora!
         return this.administrator.find();
+    }
+
+    async getByUsername(username: string): Promise<Administrator | null>{
+        const admin = await this.administrator.findOne({where:{username: username}});
+        if(admin){
+            return admin;
+        }
+        return null;
     }
 
     // getById(id: number): Promise<Administrator>{
