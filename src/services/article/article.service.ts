@@ -62,6 +62,30 @@ export class ArticleService {
 
     // GET ----------------------------------------------------------------
 
+    getOne(articleId: number,): Promise<Article>{
+        return this.article.findOne({where: {articleId}});
+    }
+    getOneWithCategory(articleId: number,): Promise<Article>{
+        return this.article.findOne({where: {articleId}, relations: ['category']});
+    }
+    getOneWithArticlePrices(articleId: number): Promise<Article>{
+        return this.article.findOne({where: {articleId}, relations: ['articlePrices']});
+    }
+    getOneWithArticleFeatures(articleId: number): Promise<Article>{
+        return this.article.findOne({where: {articleId}, relations: ['articleFeatures']});
+    }
+    getOneWithFeatures(articleId: number): Promise<Article>{
+        return this.article.findOne({where: {articleId}, relations: ['features']});
+    }
+    getOneWithPhotos(articleId: number): Promise<Article>{
+        return this.article.findOne({where: {articleId}, relations: ['photos']});
+    }
+    // OVO ZAVRSI DO KRAJA, VIDI U article.controller.ts!!!
+    // getOneWithAllData(articleId: number): Promise<Article>{
+    //     return this.article.findOne({where: {articleId}, relations: ['category', 'photos', 'articlePrices', 'articleFeatures', 'features']});
+    // }
+    
+
     getAll(): Promise<Article[]>{
         return this.article.find();
     }
