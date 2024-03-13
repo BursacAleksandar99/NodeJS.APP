@@ -1,14 +1,14 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Crud } from "@nestjsx/crud";
-import { Article } from "entities/article.entity";
+import { Article } from "src/entities/article.entity";
 import { join } from "path";
 import { AddArticleDto } from "src/dtos/article/add.article.dto";
 import { EditArticleDto } from "src/dtos/article/edit.article.dto";
 import { ArticleService } from "src/services/article/article.service";
 import { diskStorage } from 'multer'
 import { StorageConfig } from "config/storage.config";
-import { Photo } from "entities/photo.entity";
+import { Photo } from "src/entities/photo.entity";
 import { PhotoService } from "src/services/photo/photo.service";
 import { ApiResponse } from "src/misc/api.response.class";
 import * as fileType from 'file-type';
@@ -50,7 +50,7 @@ export class ArticleController{
     @UseInterceptors(
         FileInterceptor('photo', {
             storage: diskStorage({
-                destination: StorageConfig.photoDestination,
+                destination: StorageConfig.photo.destination,
                 filename: (req, file, callback) => {
                     // 'Neka   slika.jpg' ->
                     // '20200420-1253634563-Neka-slika.jpg'
@@ -95,7 +95,7 @@ export class ArticleController{
             },
             limits: {
                 files: 1,
-                fileSize: StorageConfig.photoMaxFileSize,
+                fileSize: StorageConfig.photo.maxSize,
             },
 
         })
@@ -122,8 +122,8 @@ export class ArticleController{
             return new ApiResponse('error', -4002, 'Bad file content type!');
         }
 
-        await this.createThumb(photo);
-        await this.createSmallImage(photo);
+        await this.createResizedImage(photo, StorageConfig.photo.resize.thumb)
+        await this.createResizedImage(photo, StorageConfig.photo.resize.small)
 
 
        
@@ -139,43 +139,55 @@ export class ArticleController{
 
     } 
     async createThumb(photo){
-        const originalFilePath = photo.path;
-        const fileName = photo.filename;
+        // const originalFilePath = photo.path;
+        // const fileName = photo.filename;
 
-        const destinationFilePath = StorageConfig.photoDestination + "thumb/" + fileName; // lokacija naseg Thumb foldera gde ce cuvati slike! 
+        // const destinationFilePath = StorageConfig.photo.destination + StorageConfig.photo.resize.thumb.directory + fileName; // lokacija naseg Thumb foldera gde ce cuvati slike! 
 
-        await sharp(originalFilePath)
-        .resize({
-            fit: 'cover',
-            width: StorageConfig.photoThumbSize.width,
-            height: StorageConfig.photoThumbSize.height,
-            background:{
-                r: 255, g: 255, b: 255, alpha: 0.0
-            }
-
-        })
-        .toFile(destinationFilePath);
+        // await sharp(originalFilePath)
+        // .resize({
+        //     fit: 'cover',
+        //     width: StorageConfig.photo.resize.thumb.width,
+        //     height: StorageConfig.photo.resize.thumb.height,
+            
+        // })
+        // .toFile(destinationFilePath);
+        await this.createResizedImage(photo, StorageConfig.photo.resize.thumb)
 
     }
     async createSmallImage(photo){
 
+        // const originalFilePath = photo.path;
+        // const fileName = photo.filename;
+
+        // const destinationFilePath = StorageConfig.photo.destination + StorageConfig.photo.resize.small.directory + fileName; // lokacija naseg Thumb foldera gde ce cuvati slike! 
+
+        // await sharp(originalFilePath)
+        // .resize({
+        //     fit: 'cover',
+        //     width: StorageConfig.photo.resize.small.width,
+        //     height: StorageConfig.photo.resize.small.height,
+            
+        // })
+        // .toFile(destinationFilePath);
+        await this.createResizedImage(photo, StorageConfig.photo.resize.small)
+
+    }
+    async createResizedImage(photo, resizeSettings){
         const originalFilePath = photo.path;
         const fileName = photo.filename;
 
-        const destinationFilePath = StorageConfig.photoDestination + "small/" + fileName; // lokacija naseg Thumb foldera gde ce cuvati slike! 
+        const destinationFilePath = StorageConfig.photo.destination + resizeSettings.directory + fileName; // lokacija naseg Thumb foldera gde ce cuvati slike! 
 
         await sharp(originalFilePath)
         .resize({
             fit: 'cover',
-            width: StorageConfig.photoSmallSize.width,
-            height: StorageConfig.photoSmallSize.height,
-            background:{
-                r: 255, g: 255, b: 255, alpha: 0.0
-            }
-
+            width: resizeSettings.width,
+            height: resizeSettings.height,
+            // StorageConfig.photo.resize smo promenili sa resizeSettings
+            
         })
         .toFile(destinationFilePath);
-
     }
 
     @Get()
