@@ -1,19 +1,13 @@
-import {IsString, IsOptional, IsInt} from 'class-validator';
-
 export class EditArticleDto {
-    @IsString()
-    @IsOptional()
-    name?: string;
-
-    @IsInt()
-    @IsOptional()
-    categoryId?: number;
-
-    @IsInt()
-    @IsOptional()
-    excerpt?: string;
-
-    @IsInt()
-    @IsOptional()
-    description?: string;
+    name: string;
+    categoryId: number;
+    excerpt: string; 
+    description: string;
+    status: 'available' | 'visible' | 'hidden';
+    isPromoted: 0 | 1;
+    price: number;
+    features: {
+        featureId: number;
+        value: string;
+    }[] | null;
 }

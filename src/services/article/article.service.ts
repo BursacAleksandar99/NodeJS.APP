@@ -8,7 +8,7 @@ import { Article } from "src/entities/article.entity";
 import { AddArticleDto } from "src/dtos/article/add.article.dto";
 import { EditArticleDto } from "src/dtos/article/edit.article.dto";
 import { Repository } from "typeorm";
-import { ApiResponse, ApiResponseMetadata, ApiResponseOptions } from "@nestjs/swagger";
+import { ApiResponse } from "src/misc/api.response.class";
 
 @Injectable()
 export class ArticleService {
@@ -24,7 +24,7 @@ export class ArticleService {
         ){
         
     }
-    async createFullArticle(data: AddArticleDto): Promise<Article | ApiResponseOptions> {
+    async createFullArticle(data: AddArticleDto): Promise<Article | ApiResponse> {
         let newArticle: Article = new Article();
         newArticle.name = data.name;
         newArticle.categoryId = data.categoryId;
@@ -58,6 +58,69 @@ export class ArticleService {
                 "articlePrices"
             ]
         });
+
+        
+    }
+    async editFullArticle(articleId: number, data: EditArticleDto): Promise<Article | ApiResponse>{
+        const existingArticle: Article = await this.article.findOne({where: {articleId}, relations: ['articlePrices', 'articleFeatures']})    
+        if(!existingArticle){
+            return new ApiResponse('error', -5001, 'Article not found!');
+            
+            
+        }
+        
+        
+        existingArticle.name = data.name;
+        existingArticle.categoryId = data.categoryId;
+        existingArticle.excerpt = data.excerpt;
+        existingArticle.description = data.description;
+        existingArticle.status = data.status;
+        existingArticle.isPromoted = data.isPromoted;
+
+        const savedArticle = await this.article.save(existingArticle);
+        if(!savedArticle){
+            return new ApiResponse('error', -5002, 'Could not save new article data!');
+        }
+
+        const newPriceString: string = Number(data.price).toFixed(2); // 50.1 -> "50.10" STRING JE! 
+
+        const lastPrice = existingArticle.articlePrices[existingArticle.articlePrices.length - 1].price;
+        const lastPriceString: string = Number(lastPrice).toFixed(2); // 50 -> "50.00"
+
+        if(newPriceString !== lastPriceString){
+            const newArticlePrice = new ArticlePrice();
+            newArticlePrice.articleId = articleId;
+            newArticlePrice.price = data.price;
+
+            const savedArticlePrice = await this.articlePrice.save(newArticlePrice);
+            if(!savedArticlePrice){
+                return new ApiResponse('error', -5003, 'Could not save new article price!');
+            }
+        }
+
+        if(data.features !== null){
+            await this.articleFeature.remove(existingArticle.articleFeatures);
+
+            for(let feature of data.features){
+                let newArticleFeature = new ArticleFeature();
+                newArticleFeature.articleId = articleId;
+                newArticleFeature.featureId = feature.featureId;
+                newArticleFeature.value = feature.value;
+    
+                this.articleFeature.save(newArticleFeature);
+            }
+            
+        }
+        return await this.article.findOne(
+            {
+                where: { articleId: articleId }, 
+                relations: [
+                    "category",
+                    "articleFeatures",
+                    "features",
+                    "articlePrices"
+                ]
+            });
     }
 
     // GET ----------------------------------------------------------------
