@@ -44,8 +44,8 @@ export class CategoryService  {
 
     // POST ---------------------------------------------------------------
 
-    createOne(AddArticleDto: AddCategoryDto): Promise<Category>{ 
-        const article = this.category.create(AddArticleDto);
+    createOne(AddCategoryDto: AddCategoryDto): Promise<Category>{ 
+        const article = this.category.create(AddCategoryDto);
         return this.category.save(article);
     }
 
