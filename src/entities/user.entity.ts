@@ -50,10 +50,7 @@ export class User {
     length: 24})
   phoneNumber: string;
 
-  @Column({ 
-    type: "text", 
-    name: "postal_address" })
-    postalAddress: string;
+  
 
   @OneToMany(() => Cart, (cart) => cart.user)
   carts: Cart[];
