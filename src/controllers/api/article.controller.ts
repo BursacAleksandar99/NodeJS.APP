@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Crud } from "@nestjsx/crud";
 import { Article } from "src/entities/article.entity";
@@ -14,6 +14,8 @@ import { ApiResponse } from "src/misc/api.response.class";
 import * as fileType from 'file-type';
 import * as fs from 'fs';
 import * as sharp from "sharp";
+import { RoleCheckedGuard } from "src/misc/role.checker.guard";
+import { AllowToRoles } from "src/misc/allow.to.roles.descriptior";
 
 
 @Controller('api/article')
@@ -42,15 +44,24 @@ export class ArticleController{
         ){
         
     }
+    
     @Post('createFull')
+    @UseGuards(RoleCheckedGuard)
+    @AllowToRoles('administrator')
     createFullArticle(@Body() data: AddArticleDto){
         return this.articleService.createFullArticle(data);
     }
+    
     @Patch(':id') // http://localhost:3000/api/article/2
+    @UseGuards(RoleCheckedGuard)
+    @AllowToRoles('administrator')
     editFullArticle(@Param('id') id: number, @Body() data: EditArticleDto){
         return this.articleService.editFullArticle(id, data);
     }
+    
     @Post(':id/uploadPhoto/') // POST http://localhost:3000/api/article/:id/uploadPhoto/
+    @UseGuards(RoleCheckedGuard)
+    @AllowToRoles('administrator')
     @UseInterceptors(
         FileInterceptor('photo', {
             storage: diskStorage({
@@ -195,6 +206,8 @@ export class ArticleController{
     }
     // ruta na primer http://localhost:3000/api/article/1/deletePhoto/45/
     @Delete(':articleId/deletePhoto/:photoId')
+    @UseGuards(RoleCheckedGuard)
+    @AllowToRoles('administrator')
     public async deletePhoto(
         @Param('articleId') articleId: number,
         @Param('photoId') photoId: number,
@@ -226,6 +239,8 @@ export class ArticleController{
     
 
     @Get()
+    @UseGuards(RoleCheckedGuard)
+    @AllowToRoles('administrator')
     getAll(@Query('join') join?: string): Promise<Article[]>{
         if(join === 'category'){
             return this.articleService.getAllWithCategory();
@@ -241,6 +256,8 @@ export class ArticleController{
         return this.articleService.getAllWithCategoryAndPhotosAndAriclePricesAndArticleFeaturesAndFeatures();
     }
     @Get(':id')
+    @UseGuards(RoleCheckedGuard)
+    @AllowToRoles('administrator')
     getOne(@Param('id') articleId: number, @Query('join') join?: string) : Promise<Article>{
         if (join === 'category') {
             return this.articleService.getOneWithCategory(articleId);
@@ -261,16 +278,22 @@ export class ArticleController{
     // }
 
     @Post()
+    @UseGuards(RoleCheckedGuard)
+    @AllowToRoles('administrator')
     createOne(@Body() AddArticleDto: AddArticleDto): Promise<Article> {
     return this.articleService.createOne(AddArticleDto)
     }
 
     @Put(':id')
+    @UseGuards(RoleCheckedGuard)
+    @AllowToRoles('administrator')
     async update(@Param('id') articleId: number, @Body() EditArticleDto: EditArticleDto): Promise<Article>{
         return this.articleService.update(articleId, EditArticleDto);
     }
 
     @Delete(':id')
+    @UseGuards(RoleCheckedGuard)
+    @AllowToRoles('administrator')
     async delete(@Param('id') articleId: number): Promise<void>{
         return this.articleService.deleteArticle(articleId);
     }
