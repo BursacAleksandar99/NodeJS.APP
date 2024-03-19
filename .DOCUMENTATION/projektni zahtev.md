@@ -1,0 +1,1 @@
+# Aplikacija za online prodaju elektronske i racunarske opreme
