@@ -1,9 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { StorageConfig } from 'config/storage.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useStaticAssets(StorageConfig.photo.destination, {
+    prefix: StorageConfig.photo.urlPrefix,
+    maxAge: StorageConfig.photo.maxAge, //  7 dana
+    index: false,
+
+  });
   
   const config = new DocumentBuilder()
     .setTitle('Your API Title')
