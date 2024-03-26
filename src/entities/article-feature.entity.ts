@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Article } from "./article.entity";
 import { Feature } from "./feature.entity";
+import * as Validator from 'class-validator';
 
 @Index("fk_article_feature_article_id", ["articleId"], {})
 @Index("uq_article_feature_feature_id_article_id", ["featureId", "articleId"], {
@@ -38,6 +39,9 @@ export class ArticleFeature {
     type: "varchar", 
     name: "value", 
     length: 255})
+    @Validator.IsNotEmpty()
+    @Validator.IsString()
+    @Validator.Length(1, 255)
   value: string;
 
   @ManyToOne(() => Article, (article) => article.articleFeatures, {

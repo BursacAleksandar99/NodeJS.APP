@@ -1,20 +1,15 @@
-import { from } from "rxjs";
-import { IsString, IsOptional, IsInt} from 'class-validator';
-
+import * as Validator from 'class-validator';
 export class EditCategoryDto {
-    @IsInt()
-    @IsOptional()
     categoryId: number;
 
-    @IsString()
-    @IsOptional()
+    @Validator.IsNotEmpty()
+    @Validator.IsString()
+    @Validator.Length(5, 32)
     name: string;
 
-    @IsString()
-    @IsOptional()
+    @Validator.IsNotEmpty()
+    @Validator.IsString()
+    @Validator.Length(1, 128)
     imagePath: string;
-
-    @IsInt()
-    @IsOptional()
     parentCategoryId: number;
 }

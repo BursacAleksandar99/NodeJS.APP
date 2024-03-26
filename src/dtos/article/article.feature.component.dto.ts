@@ -1,11 +1,8 @@
 import * as Validator from 'class-validator';
-export class AddFeatureDto{
+export class ArticleFeatureComponentDto{
     featureId: number;
-
     @Validator.IsNotEmpty()
     @Validator.IsString()
-    @Validator.Length(5, 32)
-    name: string;
-    categoryId: number;
-    
+    @Validator.Length(1, 255)
+    value: string;
 }
