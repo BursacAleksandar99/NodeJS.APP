@@ -28,6 +28,8 @@ import { UserService } from './services/user/user.service';
 import { CartService } from './services/cart/cart.service';
 import { UserCartController } from './controllers/api/user.cart.controller';
 import { OrderService } from './services/order/order.service';
+// import { Article2Service } from './services/article/article2.service';
+// import { Article2Controller } from './controllers/api/article2.controller';
 
 @Module({
   imports: [
@@ -72,6 +74,7 @@ import { OrderService } from './services/order/order.service';
     AdministratorController,
     CategoryController,
     ArticleController,
+    // Article2Controller,
     AuthController,
     FeatureController,
     UserCartController],
@@ -79,6 +82,7 @@ import { OrderService } from './services/order/order.service';
     AdministatorService,
     CategoryService,
     ArticleService,
+    // Article2Service,
     PhotoService,
     FeatureService,
     UserService,
