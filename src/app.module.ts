@@ -31,6 +31,7 @@ import { OrderService } from './services/order/order.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailConfig } from 'config/mail.configuration';
 import { OrderMailer } from './services/order/order.mailer.service';
+import { AdministratorOrderController } from './controllers/api/administrator.order.controller';
 // import { Article2Service } from './services/article/article2.service';
 // import { Article2Controller } from './controllers/api/article2.controller';
 
@@ -104,7 +105,8 @@ import { OrderMailer } from './services/order/order.mailer.service';
     // Article2Controller,
     AuthController,
     FeatureController,
-    UserCartController],
+    UserCartController,
+    AdministratorOrderController],
   providers: [
     AdministatorService,
     CategoryService,

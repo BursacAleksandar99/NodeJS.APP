@@ -31,19 +31,33 @@ export class OrderService {
         newOrder.cartId = cartId;
         const savedOrder = await this.order.save(newOrder);
 
-        return await this.order.findOne({ where: { orderId: savedOrder.orderId },
+        return await this.getById(savedOrder.orderId);
+    }
+
+    async getById(orderId: number){
+        return await this.order.findOne({where: {orderId},
             relations:[
-                // "cart",
-                // "cart.user",
-                // "cart.Articles",
-                // "cart.Articles.article",
-                // "cart.Articles.article.category"
+            
                 "cart",
                 "cart.user",
                 "cart.cartArticles",
                 "cart.cartArticles.article",
                 "cart.cartArticles.article.category",
                 "cart.cartArticles.article.articlePrices",
-            ] });
+            ]});
+         }
+
+    async changeStatus(orderId: number, newStatus: "rejected" | "accepted" | "shipped" | "pending"){
+        const order = await this.getById(orderId);
+
+        if(!order){
+            return new ApiResponse("error", -9001, "No such order found!");
+        }
+        order.status = newStatus;
+
+        await this.order.save(order);
+
+        return await this.getById(orderId);
     }
 }
+
