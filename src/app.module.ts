@@ -28,6 +28,9 @@ import { UserService } from './services/user/user.service';
 import { CartService } from './services/cart/cart.service';
 import { UserCartController } from './controllers/api/user.cart.controller';
 import { OrderService } from './services/order/order.service';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailConfig } from 'config/mail.configuration';
+import { OrderMailer } from './services/order/order.mailer.service';
 // import { Article2Service } from './services/article/article2.service';
 // import { Article2Controller } from './controllers/api/article2.controller';
 
@@ -67,7 +70,31 @@ import { OrderService } from './services/order/order.service';
         Photo,
         User
       
-    ])
+    ]),
+    // MailerModule.forRoot({
+    //   transport: 'smtps://' + MailConfig.username + ':' +
+    //                           MailConfig.password + '@' +
+    //                           MailConfig.hostname,
+                              
+    //   defaults: {
+    //     from: MailConfig.senderEmail,
+    //   },
+      
+    // }),
+    MailerModule.forRoot({
+      transport: {
+        host: MailConfig.hostname,
+        port: 465,
+        secure: true,
+        auth: {
+          user: MailConfig.username,
+          pass: MailConfig.password,
+        },
+      },
+      defaults: {
+        from: MailConfig.senderEmail,
+      },
+    })
   ],
   controllers: [
     AppController,
@@ -87,7 +114,8 @@ import { OrderService } from './services/order/order.service';
     FeatureService,
     UserService,
     CartService,
-    OrderService
+    OrderService,
+    OrderMailer
     ],
     exports: [
       AdministatorService,
